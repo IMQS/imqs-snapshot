@@ -4,6 +4,7 @@ def export(args)
 	server_name = args[0]
 	snap_location = '\snapper\snapshots\\'
 	db_location = '\imqsvar\postgres\*'
+	conf_location = '\imqsbin\conf'
 
 	snap_location += server_name
 
@@ -13,8 +14,15 @@ def export(args)
 	FileUtils.mkdir_p(snap_location)
 	snap_location += '\\'
 
+	p("Ziping up #{server_name} database")
 	cmd = "7z a #{snap_location}dbdumps.7z -m0=lzma2 -mx0 #{db_location}"
 	`#{cmd}`
+
+	p("Ziping up #{server_name} conf")
+	cmd = "7z a #{snap_location}confdumps.7z -m0=lzma2 -mx0 #{conf_location}"
+	`#{cmd}`
+
+	
 end
 
 if __FILE__ == $0
