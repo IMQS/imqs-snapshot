@@ -1,0 +1,1 @@
+net use t: \\imqsfile\D\Public

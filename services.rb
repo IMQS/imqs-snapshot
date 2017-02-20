@@ -47,35 +47,37 @@ AllServices = [
 # This is a synchronous version of stopping services (waits for return)
 def stop_services_wait(timeout_seconds = 10)
 	puts('Stoping all services')
+	print("(0/#{AllServices.length})")
 
-	start = Time.now
-	nstarted = 0
+	nstoped = 0
 	AllServices.each { |service|
 		name = service[:name]
-		puts("Stopping #{name}")
-		res = `net stop #{name}`
-		puts('Service successfully stopped') if res
-		puts('Service not running') unless res
-		nstarted += 1 if res.include? 'service was stopped successfully'
+		res = `net stop #{name} 2>&1`
+		if res.include?('service was stopped successfully') || res.include?('service is not started')
+			nstoped += 1
+		else
+			print("\r#{name}: #{res}\n")
+		end
+		print("\r(#{nstoped}/#{AllServices.length})")
 	}
-#	puts('Service shutdown exceeded specified time') if Time.now - start >= timeout_seconds
-#	return nstarted == AllServices.length
+	puts(' done.')
 end
 
 # This is a synchronous version of starting services (waits for return)
 def start_services_wait(timeout_seconds = 10)
 	puts('Starting all services')
+	print("(0/#{AllServices.length})")
 
-	start = Time.now
 	nstarted = 0
-	AllServices.each do |service|
+	AllServices.each { |service|
 		name = service[:name]
-		puts("Starting #{name}")
-		res = `net start #{name}`
-		puts('Service started') if res
-		puts('Service not started') unless res
-		nstarted += 1 if res.include? "service was started successfully"
-	end
-#	puts('Service start up exceeded specified time') if Time.now - start >= timeout_seconds
-#	return nstarted == names.length
+		res = `net start #{name} 2>&1`
+		if res.include?('service was started successfully')
+			nstarted += 1 
+		else
+			print("\rService #{name} could not be started\n")
+		end
+		print("\r(#{nstarted}/#{AllServices.length})")
+	}
+	puts(' done.')
 end

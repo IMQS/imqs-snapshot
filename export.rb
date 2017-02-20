@@ -2,6 +2,7 @@ require 'fileutils'
 require '.\services.rb'
 
 def export(args)
+	p7z = '\imqsbin\tools\7z.exe'
 	not_found = false
 	server_name = args[0]
 	snap_location = ''
@@ -21,7 +22,7 @@ def export(args)
 	end
 	snap_location += '\\'
 	FileUtils.mkdir_p(snap_location + 'dbdumps')
-	FileUtils.mkdir_p(snap_loaction + 'imports')
+	FileUtils.mkdir_p(snap_location + 'imports')
 	
 	if !File.directory?(postgres_location)
 		puts("Postgres database not found.")
@@ -44,31 +45,36 @@ def export(args)
 		abort
 	end
 
-	db_location += '\*'
+	postgres_location += '\*'
+	mongo_location += '\*'
 	bin_location += '\*'
 	conf_location += '\*'
 
-	stop_services_wait()
+	if __FILE__ == $0
+		stop_services_wait()
+	end
 
 	puts("Ziping up #{server_name} Postgres database")
-	cmd = "7z a #{snap_location}dbdumps\postgres_dump.7z -m0=lzma2 -mx0 #{db_location}"
+	cmd = "#{p7z} a #{snap_location}dbdumps\\postgres_dump.7z -m0=lzma2 -mx0 #{postgres_location}"
 	`#{cmd}`
 
 	puts("Ziping up #{server_name} Mongo database")
-	cmd = "7z a #{snap_location}dbdumps\mongo_dump.7z -m0=lzma2 -mx0 #{db_location}"
+	cmd = "#{p7z} a #{snap_location}dbdumps\\mongo_dump.7z -m0=lzma2 -mx0 #{mongo_location}"
 	`#{cmd}`
 
 	puts("Ziping up #{server_name} Binarys")
-	cmd = "7z a #{snap_location}bindumps.7z -m0=lzma2 -mx0 #{bin_location}"
+	cmd = "#{p7z} a #{snap_location}bindumps.7z -m0=lzma2 -mx0 #{bin_location}"
 	`#{cmd}`
 	
 	puts("Ziping up #{server_name} Configs")
-	cmd = "7z a #{snap_location}confdumps.7z -m0=lzma2 -mx0 #{conf_location}"
+	cmd = "#{p7z} a #{snap_location}confdumps.7z -m0=lzma2 -mx0 #{conf_location}"
 	`#{cmd}`
 
 	puts('Exported system to ' + snap_location)
 
-	start_services_wait()
+	if __FILE__ == $0
+		start_services_wait()
+	end
 end
 
 if __FILE__ == $0

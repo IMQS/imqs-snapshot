@@ -3,6 +3,7 @@ require '.\services.rb'
 require '.\export.rb'
 
 def import(args)
+	p7z = '\imqsbin\tools\7z.exe'
 	server_name = args[0]
 	snap_location = ''
 	postgres_location = '\imqsvar\postgres'
@@ -21,6 +22,10 @@ def import(args)
 		abort
 	end
 
+	if __FILE__ == $0
+		stop_services_wait()
+	end
+
 	if (File.directory?(postgres_location) && File.directory?(mongo_location) &&
 		File.directory?(bin_location) && File.directory?(conf_location) &&
 		!File.directory?('/temp/backup'))
@@ -29,31 +34,29 @@ def import(args)
 		puts('Importing snapshot')
 	end
 
-	stop_services_wait()
-
 	snap_location += '\\'
 
-	if File.exist?(snap_location + 'dbdumps\postgres_dump.7z')
+	if File.exist?(snap_location + 'dbdumps\\postgres_dump.7z')
 		if File.directory?(postgres_location)
 			FileUtils.rm_rf(postgres_location)
 		end
 		FileUtils.mkdir_p(postgres_location)
 	
 		puts("Unziping #{server_name} Postgres database dump")
-		cmd = "7z x #{snap_location}dbdumps\postgres_dump.7z -o#{postgres_location}"
+		cmd = "#{p7z} x #{snap_location}dbdumps\\postgres_dump.7z -o#{postgres_location}"
 		`#{cmd}`
 	else
 		puts('Postgres database dump not found. Skipping...')
 	end
 	
-	if File.exist?(snap_location + 'dbdumps\mongo_dump.7z')
+	if File.exist?(snap_location + 'dbdumps\\mongo_dump.7z')
 		if File.directory?(mongo_location)
 			FileUtils.rm_rf(mongo_location)
 		end
 		FileUtils.mkdir_p(mongo_location)
 	
 		puts("Unziping #{server_name} Mongo database dump")
-		cmd = "7z x #{snap_location}dbdumps\mongo_dump.7z -o#{mongo_location}"
+		cmd = "#{p7z} x #{snap_location}dbdumps\\mongo_dump.7z -o#{mongo_location}"
 		`#{cmd}`
 	else
 		puts('Mongo database dumps not found. Skipping...')
@@ -67,7 +70,7 @@ def import(args)
 			FileUtils.mkdir_p(bin_location)
 	
 			puts("Unziping #{server_name} Binary dumps")
-			cmd = "7z x #{snap_location}bindumps.7z -o#{bin_location}"
+			cmd = "#{p7z} x #{snap_location}bindumps.7z -o#{bin_location}"
 			`#{cmd}`
 		else
 			puts('Binary dumps not found. Skipping...')
@@ -81,13 +84,15 @@ def import(args)
 		FileUtils.mkdir_p(conf_location)
 
 		puts("Unziping #{server_name} Configs dumps")
-		cmd = "7z x #{snap_location}confdumps.7z -o#{conf_location}"
+		cmd = "#{p7z} x #{snap_location}confdumps.7z -o#{conf_location}"
 		`#{cmd}`
 	else
 		puts('Configs dumps not found. Skipping...')
 	end
 
-	start_services_wait()
+	if __FILE__ == $0
+		start_services_wait()
+	end
 end
 
 if __FILE__ == $0
