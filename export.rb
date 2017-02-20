@@ -5,7 +5,8 @@ def export(args)
 	not_found = false
 	server_name = args[0]
 	snap_location = ''
-	db_location = '\imqsvar\postgres'
+	postgres_location = '\imqsvar\postgres'
+	mongo_location = '\imqsvar\mongo'
 	bin_location = '\imqsbin\bin'
 	conf_location = '\imqsbin\conf'
 
@@ -18,11 +19,16 @@ def export(args)
 	if File.directory?(snap_location)
 		FileUtils.rm_rf(snap_location)
 	end
-	FileUtils.mkdir_p(snap_location)
 	snap_location += '\\'
-
-	if !File.directory?(db_location)
-		puts("Database not found.")
+	FileUtils.mkdir_p(snap_location + 'dbdumps')
+	FileUtils.mkdir_p(snap_loaction + 'imports')
+	
+	if !File.directory?(postgres_location)
+		puts("Postgres database not found.")
+		not_found = true
+	end
+	if !File.directory?(mongo_location)
+		puts("Mongo database not found.")
 		not_found = true
 	end
 	if !File.directory?(bin_location)
@@ -42,8 +48,12 @@ def export(args)
 	bin_location += '\*'
 	conf_location += '\*'
 
-	puts("Ziping up #{server_name} Database")
-	cmd = "7z a #{snap_location}dbdumps.7z -m0=lzma2 -mx0 #{db_location}"
+	puts("Ziping up #{server_name} Postgres database")
+	cmd = "7z a #{snap_location}dbdumps\postgres_dump.7z -m0=lzma2 -mx0 #{db_location}"
+	`#{cmd}`
+
+	puts("Ziping up #{server_name} Mongo database")
+	cmd = "7z a #{snap_location}dbdumps\mongo_dump.7z -m0=lzma2 -mx0 #{db_location}"
 	`#{cmd}`
 
 	puts("Ziping up #{server_name} Binarys")

@@ -5,7 +5,8 @@ require '.\export.rb'
 def import(args)
 	server_name = args[0]
 	snap_location = ''
-	db_location = '\imqsvar\postgres'
+	postgres_location = '\imqsvar\postgres'
+	mongo_location = '\imqsvar\mongo'
 	bin_location = '\imqsbin\bin'
 	conf_location = '\imqsbin\conf'
 
@@ -20,7 +21,9 @@ def import(args)
 		abort
 	end
 
-	if (File.directory?(db_location) && File.directory?(bin_location) && File.directory?(conf_location) && !File.directory?('/temp/backup'))
+	if (File.directory?(postgres_location) && File.directory?(mongo_location) &&
+		File.directory?(bin_location) && File.directory?(conf_location) &&
+		!File.directory?('/temp/backup'))
 		puts('Found existing system with no backup. Making backup.')
 		export([ 'backup' ])
 		puts('Importing snapshot')
@@ -30,17 +33,30 @@ def import(args)
 
 	snap_location += '\\'
 
-	if File.exist?(snap_location + 'dbdumps.7z')
-		if File.directory?(db_location)
-			FileUtils.rm_rf(db_location)
+	if File.exist?(snap_location + 'dbdumps\postgres_dump.7z')
+		if File.directory?(postgres_location)
+			FileUtils.rm_rf(postgres_location)
 		end
-		FileUtils.mkdir_p(db_location)
+		FileUtils.mkdir_p(postgres_location)
 	
-		puts("Unziping #{server_name} Database dumps")
-		cmd = "7z x #{snap_location}dbdumps.7z -o#{db_location}"
+		puts("Unziping #{server_name} Postgres database dump")
+		cmd = "7z x #{snap_location}dbdumps\postgres_dump.7z -o#{postgres_location}"
 		`#{cmd}`
 	else
-		puts('Database dumps not found. Skipping...')
+		puts('Postgres database dump not found. Skipping...')
+	end
+	
+	if File.exist?(snap_location + 'dbdumps\mongo_dump.7z')
+		if File.directory?(mongo_location)
+			FileUtils.rm_rf(mongo_location)
+		end
+		FileUtils.mkdir_p(mongo_location)
+	
+		puts("Unziping #{server_name} Mongo database dump")
+		cmd = "7z x #{snap_location}dbdumps\mongo_dump.7z -o#{mongo_location}"
+		`#{cmd}`
+	else
+		puts('Mongo database dumps not found. Skipping...')
 	end
 
 	if args.length == 1
