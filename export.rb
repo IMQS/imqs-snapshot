@@ -48,6 +48,8 @@ def export(args)
 	bin_location += '\*'
 	conf_location += '\*'
 
+	stop_services_wait()
+
 	puts("Ziping up #{server_name} Postgres database")
 	cmd = "7z a #{snap_location}dbdumps\postgres_dump.7z -m0=lzma2 -mx0 #{db_location}"
 	`#{cmd}`
@@ -65,6 +67,8 @@ def export(args)
 	`#{cmd}`
 
 	puts('Exported system to ' + snap_location)
+
+	start_services_wait()
 end
 
 if __FILE__ == $0
