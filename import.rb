@@ -4,23 +4,31 @@ require '.\export.rb'
 
 def import(args)
 	server_name = args[0]
-	snap_location = '\snapper\snapshots\\'
+	snap_location = ''
 	db_location = '\imqsvar\postgres'
 	bin_location = '\imqsbin\bin'
 	conf_location = '\imqsbin\conf'
 
-	if !File.directory?(snap_location + server_name)
+	if server_name == 'backup'
+		snap_location = '\temp\backup'
+	else
+		snap_location = '\snapper\snapshots\\' + server_name
+	end
+
+	if !File.directory?(snap_location)
 		puts("Snapshot #{server_name} not found. Aborting...")
 		abort
 	end
 
-	if (File.directory?(db_location) && File.directory?(bin_location) && File.directory?(conf_location) && !File.directory?(snap_location + 'backup'))
+	if (File.directory?(db_location) && File.directory?(bin_location) && File.directory?(conf_location) && !File.directory?('/temp/backup'))
 		puts('Found existing system with no backup. Making backup.')
 		export([ 'backup' ])
 		puts('Importing snapshot')
 	end
 
-	snap_location += server_name + '\\'
+	stop_services_wait()
+
+	snap_location += '\\'
 
 	if File.exist?(snap_location + 'dbdumps.7z')
 		if File.directory?(db_location)
@@ -62,6 +70,8 @@ def import(args)
 	else
 		puts('Configs dumps not found. Skipping...')
 	end
+
+	start_services_wait()
 end
 
 if __FILE__ == $0

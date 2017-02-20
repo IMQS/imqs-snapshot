@@ -4,12 +4,16 @@ require '.\services.rb'
 def export(args)
 	not_found = false
 	server_name = args[0]
-	snap_location = '\snapper\snapshots\\'
+	snap_location = ''
 	db_location = '\imqsvar\postgres'
 	bin_location = '\imqsbin\bin'
 	conf_location = '\imqsbin\conf'
-	
-	snap_location += server_name
+
+	if server_name == 'backup'
+		snap_location = '\temp\backup'
+	else
+		snap_location = '\snapper\snapshots\\' + server_name
+	end
 
 	if File.directory?(snap_location)
 		FileUtils.rm_rf(snap_location)
@@ -49,6 +53,8 @@ def export(args)
 	puts("Ziping up #{server_name} Configs")
 	cmd = "7z a #{snap_location}confdumps.7z -m0=lzma2 -mx0 #{conf_location}"
 	`#{cmd}`
+
+	puts('Exported system to ' + snap_location)
 end
 
 if __FILE__ == $0
