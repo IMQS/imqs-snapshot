@@ -2,14 +2,14 @@ require 'fileutils'
 require '.\services.rb'
 
 def export(args)
-	p7z = 'c:\imqsbin\tools\7z.exe'
+	p7z = 'c:\\imqsbin\\tools\\7z.exe'
 	not_found = false
 	server_name = args[0]
 	snap_location = ''
-	postgres_location = 'c:\imqsvar\postgres'
-	mongo_location = 'c:\imqsvar\mongo'
-	bin_location = 'c:\imqsbin\bin'
-	conf_location = 'c:\imqsbin\conf'
+	postgres_location = 'c:\\imqsvar\\postgres'
+	mongo_location = 'c:\\imqsvar\\mongo'
+	bin_location = 'c:\\imqsbin\\bin'
+	conf_location = 'c:\\imqsbin\\conf'
 
 	if !File.directory?(postgres_location)
 		puts("Postgres database not found.")
@@ -33,22 +33,21 @@ def export(args)
 	end
 
 	if server_name == 'backup'
-		snap_location = 'c:\temp\backup\\'
+		snap_location = 'c:\\temp\\backup\\'
 	else
-		snap_location = "t:\IMQS8_Data\Snapshots\\#{server_name}\\"
+		snap_location = "t:\\IMQS8_Data\\Snapshots\\#{server_name}\\"
 	end
 
 	if File.directory?(snap_location)
 		FileUtils.rm_rf(snap_location)
 	end
-	snap_location += '\\'
 	FileUtils.mkdir_p(snap_location + 'dbdumps')
 	FileUtils.mkdir_p(snap_location + 'imports')
 
-	postgres_location += '\*'
-	mongo_location += '\*'
-	bin_location += '\*'
-	conf_location += '\*'
+	postgres_location += '\\*'
+	mongo_location += '\\*'
+	bin_location += '\\*'
+	conf_location += '\\*'
 
 	if __FILE__ == $0
 		stop_services_wait()

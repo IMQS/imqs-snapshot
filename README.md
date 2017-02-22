@@ -26,3 +26,4 @@ The importer will only import that which it can find.
 `build.rb <server_name>`  
 The argument `server_name` must correspond to a folder name in `T:\\IMQS8_Data\Snapshots`.  
 A fresh postgress database will be built from the contents of the `Imports` folder located in the `server_name` folder.  
+To users will have been created called "testadmin" and "testnormal" both with password "123".
