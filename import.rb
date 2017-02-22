@@ -3,18 +3,18 @@ require '.\services.rb'
 require '.\export.rb'
 
 def import(args)
-	p7z = '\imqsbin\tools\7z.exe'
+	p7z = 'c:\imqsbin\tools\7z.exe'
 	server_name = args[0]
 	snap_location = ''
-	postgres_location = '\imqsvar\postgres'
-	mongo_location = '\imqsvar\mongo'
-	bin_location = '\imqsbin\bin'
-	conf_location = '\imqsbin\conf'
+	postgres_location = 'c:\imqsvar\postgres'
+	mongo_location = 'c:\imqsvar\mongo'
+	bin_location = 'c:\imqsbin\bin'
+	conf_location = 'c:\imqsbin\conf'
 
 	if server_name == 'backup'
-		snap_location = '\temp\backup'
+		snap_location = 'c:\temp\backup\\'
 	else
-		snap_location = '\snapper\snapshots\\' + server_name
+		snap_location = "t:\IMQS8_Data\Snapshots\\#{server_name}\\"
 	end
 
 	if !File.directory?(snap_location)
@@ -28,13 +28,11 @@ def import(args)
 
 	if (File.directory?(postgres_location) && File.directory?(mongo_location) &&
 		File.directory?(bin_location) && File.directory?(conf_location) &&
-		!File.directory?('/temp/backup'))
+		!File.directory?('c:\temp\backup'))
 		puts('Found existing system with no backup. Making backup.')
 		export([ 'backup' ])
 		puts('Importing snapshot')
 	end
-
-	snap_location += '\\'
 
 	if File.exist?(snap_location + 'dbdumps\\postgres_dump.7z')
 		if File.directory?(postgres_location)

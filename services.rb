@@ -4,12 +4,13 @@ require "json"
 # Uncommented services where not found running after initial server setup.
 AllServices = [
 	{name: 'imqs-configuration-service'}, # Configuration service must be first, because most other services depend on it
+	{name: 'Postgres'},
 	{name: 'ImqsCpp'},
 	{name: 'ImqsRouter'},
 #	{name: 'real-time-service'},
 	{name: 'ImqsDistributer'},
-	{name: 'ImqsDocs'},
 	{name: 'ImqsMongo'},
+	{name: 'ImqsDocs'},
 	{name: 'ImqsAuth'},
 #	{name: 'imqs-pcs-webservice'},
 #	{name: 'ImqsInfraIntegration'},
@@ -17,7 +18,6 @@ AllServices = [
 #	{name: 'imqs-workforce'},
 #	{name: 'imqs-maintm-loglite'},
 #	{name: 'imqs-maintm-workflow'},
-	{name: 'ImqsSearch'},
 #	{name: 'ImqsScheduler'},
 #	{name: 'imqs-sap-notifications'},
 #	{name: 'imqs-sap-operations'},
@@ -39,9 +39,10 @@ AllServices = [
 	{name: 'ImqsCouchDB'},
 	{name: 'imqs-esri-importer'},
 	{name: 'ImqsGoFin'},
-	{name: 'ImqsPentago'},
 	{name: 'ImqsSpatialLinker'},
-	{name: 'ImqsTellowfin'}
+	{name: 'ImqsYellowfin'},
+	{name: 'ImqsSearch'},
+	{name: 'ImqsPentago'}
 ]
 
 # This is a synchronous version of stopping services (waits for return)
@@ -50,13 +51,13 @@ def stop_services_wait(timeout_seconds = 10)
 	print("(0/#{AllServices.length})")
 
 	nstoped = 0
-	AllServices.each { |service|
+	AllServices.reverse.each { |service|
 		name = service[:name]
-		res = `net stop #{name} 2>&1`
+		res = `net stop #{name} /y 2>&1`
 		if res.include?('service was stopped successfully') || res.include?('service is not started')
 			nstoped += 1
 		else
-			print("\r#{name}: #{res}\n")
+			print("\r#{name}: #{res} \n")
 		end
 		print("\r(#{nstoped}/#{AllServices.length})")
 	}
