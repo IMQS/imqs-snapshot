@@ -31,18 +31,33 @@ def build(args)
 	
 	init_postgres()
 
+	puts('Creating testing users')
+	Dir.chdir('c:\imqsbin\bin') do
+		`imqsauth.exe createuser testadmin 123`
+		`imqsauth.exe permgroupadd testadmin admin`
+		`imqsauth.exe permgroupadd testadmin enabled`
+
+		`imqsauth.exe createuser testnormal 123`
+		`imqsauth.exe permgroupadd testnormal enabled`
+	end
+
 	puts('Importing... This may take a while')
 	imports.each { |i|
-		staging = 0
-		Dir.entries(staging_location).select { |s|
-			if !File.directory? fileutils
-				staging += 1
+		puts('Import: ' + i)
+		loop do
+			staging = 0
+			Dir.entries(staging_location).select { |s|
+				if File.file?(s)
+					puts('Staging: ' + s)
+					staging += 1
+				end
+			}
+			if staging > 0
+				sleep(10)
+			else
+				FileUtils.cp(i, staging_location)
+				break
 			end
-		}
-		if staging > 0
-			sleep(10)
-		else
-			FileUtils.cp(i, staging_location)
 		end
 	}
 end
@@ -67,7 +82,7 @@ def init_postgres()
 
 	`takeown /a /f #{POSTGRES_DATA.gsub('/', '\\')} /r`
 
-	start_services_wait()
+	start_service('Postgres')
 
 	psql_stub = "\"#{POSTGRES_BIN_DIR}\\psql\" --host=localhost --username=postgres -c"
 	sql = "CREATE ROLE imqs SUPERUSER CREATEDB CREATEROLE REPLICATION LOGIN PASSWORD '#{pwd}'"
@@ -80,6 +95,7 @@ def init_postgres()
 		`ruby installers\\install.rb -prod`
 	end
 	puts('Done seting up new postgres database')
+	start_services_wait()
 end
 
 if __FILE__ == $0

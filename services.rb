@@ -5,13 +5,14 @@ require "json"
 AllServices = [
 	{name: 'imqs-configuration-service'}, # Configuration service must be first, because most other services depend on it
 	{name: 'Postgres'},
+	{name: 'ImqsYellowfin'},
 	{name: 'ImqsCpp'},
 	{name: 'ImqsRouter'},
+	{name: 'ImqsAuth'},
 #	{name: 'real-time-service'},
 	{name: 'ImqsDistributer'},
 	{name: 'ImqsMongo'},
 	{name: 'ImqsDocs'},
-	{name: 'ImqsAuth'},
 #	{name: 'imqs-pcs-webservice'},
 #	{name: 'ImqsInfraIntegration'},
 #	{name: 'imqs-formbuilder'},
@@ -40,9 +41,9 @@ AllServices = [
 	{name: 'imqs-esri-importer'},
 	{name: 'ImqsGoFin'},
 	{name: 'ImqsSpatialLinker'},
-	{name: 'ImqsYellowfin'},
 	{name: 'ImqsSearch'},
-	{name: 'ImqsPentago'}
+	{name: 'ImqsPentago'},
+	{name: 'ImqsScheduler'}
 ]
 
 # This is a synchronous version of stopping services (waits for return)
@@ -81,4 +82,14 @@ def start_services_wait(timeout_seconds = 10)
 		print("\r(#{nstarted}/#{AllServices.length})")
 	}
 	puts(' done.')
+end
+
+def start_service(name)
+	puts("Starting service #{name}")
+	res = `net start #{name} 2>&1`
+	if res.include?('service was started successfully')
+		puts("Service #{name} was started successfully")
+	else
+		puts("Service #{name} could not be started\n")
+	end
 end
