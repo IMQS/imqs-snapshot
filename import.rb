@@ -12,9 +12,9 @@ def import(args)
 	conf_location = 'c:\\imqsbin\\conf'
 
 	if server_name == 'backup'
-		snap_location = 'c:\\temp\\backup\\'
+		snap_location = 'c:\\temp\\backup\\Snapshot\\'
 	else
-		snap_location = "t:\\IMQS8_Data\\Snapshots\\#{server_name}\\"
+		snap_location = "t:\\IMQS8_Data\\Servers\\#{server_name}\\Snapshot\\"
 	end
 
 	if !File.directory?(snap_location)
@@ -34,27 +34,27 @@ def import(args)
 		puts('Importing snapshot')
 	end
 
-	if File.exist?(snap_location + 'dbdumps\\postgres_dump.7z')
+	if File.exist?(snap_location + 'postgres_dump.7z')
 		if File.directory?(postgres_location)
 			FileUtils.rm_rf(postgres_location)
 		end
 		FileUtils.mkdir_p(postgres_location)
 	
 		puts("Unziping #{server_name} Postgres database dump")
-		cmd = "#{p7z} x #{snap_location}dbdumps\\postgres_dump.7z -o#{postgres_location}"
+		cmd = "#{p7z} x #{snap_location}postgres_dump.7z -o#{postgres_location}"
 		`#{cmd}`
 	else
 		puts('Postgres database dump not found. Skipping...')
 	end
 	
-	if File.exist?(snap_location + 'dbdumps\\mongo_dump.7z')
+	if File.exist?(snap_location + 'mongo_dump.7z')
 		if File.directory?(mongo_location)
 			FileUtils.rm_rf(mongo_location)
 		end
 		FileUtils.mkdir_p(mongo_location)
 	
 		puts("Unziping #{server_name} Mongo database dump")
-		cmd = "#{p7z} x #{snap_location}dbdumps\\mongo_dump.7z -o#{mongo_location}"
+		cmd = "#{p7z} x #{snap_location}mongo_dump.7z -o#{mongo_location}"
 		`#{cmd}`
 	else
 		puts('Mongo database dumps not found. Skipping...')

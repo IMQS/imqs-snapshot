@@ -9,8 +9,8 @@ POSTGRES_DATA = 'c:\imqsvar\postgres'
 
 def build(args)
 	server_name = args[0]
-	snap_location = 't:\IMQS8_Data\Snapshots\\'
-	import_location = snap_location + server_name + '\imports\\'
+	snap_location = 't:\IMQS8_Data\Servers\\'
+	import_location = snap_location + server_name + '\Imports\\'
 	staging_location = 'c:\imqsvar\imports'
 
 	if !File.directory?(import_location)

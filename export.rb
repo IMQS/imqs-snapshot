@@ -35,15 +35,19 @@ def export(args)
 	if server_name == 'backup'
 		snap_location = 'c:\\temp\\backup\\'
 	else
-		snap_location = "t:\\IMQS8_Data\\Snapshots\\#{server_name}\\"
+		snap_location = "t:\\IMQS8_Data\\Servers\\#{server_name}\\"
 	end
 
-	if File.directory?(snap_location)
-		FileUtils.rm_rf(snap_location)
+	if File.directory?(snap_location + 'Snapshot')
+		FileUtils.rm_rf(snap_location + 'Snapshot')
 	end
-	FileUtils.mkdir_p(snap_location + 'dbdumps')
-	FileUtils.mkdir_p(snap_location + 'imports')
+	FileUtils.mkdir_p(snap_location + 'Snapshot')
 
+	if !File.directory?(snap_location + 'Imports')
+		FileUtils.mkdir_p(snap_location + 'Imports')
+	end
+
+	snap_location += 'Snapshot\\'
 	postgres_location += '\\*'
 	mongo_location += '\\*'
 	bin_location += '\\*'
@@ -54,11 +58,11 @@ def export(args)
 	end
 
 	puts("Ziping up #{server_name} Postgres database")
-	cmd = "#{p7z} a #{snap_location}dbdumps\\postgres_dump.7z -m0=lzma2 -mx0 #{postgres_location}"
+	cmd = "#{p7z} a #{snap_location}postgres_dump.7z -m0=lzma2 -mx0 #{postgres_location}"
 	`#{cmd}`
 
 	puts("Ziping up #{server_name} Mongo database")
-	cmd = "#{p7z} a #{snap_location}dbdumps\\mongo_dump.7z -m0=lzma2 -mx0 #{mongo_location}"
+	cmd = "#{p7z} a #{snap_location}mongo_dump.7z -m0=lzma2 -mx0 #{mongo_location}"
 	`#{cmd}`
 
 	puts("Ziping up #{server_name} Binarys")
