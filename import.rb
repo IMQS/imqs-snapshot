@@ -42,7 +42,7 @@ def import(args)
 		FileUtils.mkdir_p(postgres_location)
 	
 		puts("Unziping #{server_name} Postgres database dump")
-		cmd = "#{p7z} x #{snap_location}postgres_dump.7z -o#{postgres_location}"
+		cmd = "#{p7z} x #{snap_location}postgres_dump.7z -o\"#{postgres_location}\""
 		`#{cmd}`
 	else
 		puts('Postgres database dump not found. Skipping...')

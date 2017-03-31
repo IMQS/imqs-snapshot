@@ -75,7 +75,7 @@ def export(args)
 	end
 
 	puts("Ziping up #{server_name} Postgres database")
-	cmd = "#{p7z} a #{snap_location_new}postgres_dump.7z -m0=lzma2 -mx0 #{postgres_location}"
+	cmd = "#{p7z} a #{snap_location_new}postgres_dump.7z -m0=lzma2 -mx0 \"#{postgres_location}\""
 	`#{cmd}`
 
 	puts("Ziping up #{server_name} Mongo database")
