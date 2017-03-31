@@ -8,7 +8,7 @@ def export(args)
 	snap_location = ''
 	server_location = ''
 #	postgres_location = 'c:\\imqsvar\\postgres'
-	postgres_location = 'c:\\Program\ Files\\PostgreSQL\\9.3\\data'
+	postgres_location = 'c:\\Program Files\\PostgreSQL\\9.3\\data'
 	mongo_location = 'c:\\imqsvar\\mongo'
 	bin_location = 'c:\\imqsbin\\bin'
 	conf_location = 'c:\\imqsbin\\conf'
