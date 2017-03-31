@@ -3,7 +3,7 @@ Scripts for taking a snapshot of a server and deploying it on another server/mac
 
 ## Dependencies
 ### 7-Zip
-Scripts will use `7z.exe` in `\imqsbin\tools`  
+Scripts will use `7z.exe` in `\imqsbin\tools` along with the `Codecs` folder.  
 ### Network drives for Admin
 They can be maped by running MapNetworkDrivesAdmin.bat as admin.  
 

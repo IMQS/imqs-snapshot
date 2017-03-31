@@ -65,7 +65,6 @@ def export(args)
 	snap_location_new = server_location + 'Snapshot_new\\'
 	FileUtils.mkdir_p(snap_location_new)
 
-	postgres_location += '\\*'
 	mongo_location += '\\*'
 	bin_location += '\\*'
 	conf_location += '\\*'
@@ -75,19 +74,19 @@ def export(args)
 	end
 
 	puts("Ziping up #{server_name} Postgres database")
-	cmd = "#{p7z} a #{snap_location_new}postgres_dump.7z -m0=lzma2 -mx0 \"#{postgres_location}\""
+	cmd = "#{p7z} a #{snap_location_new}postgres_dump.7z -m0=bcj -m1=zstd -mx1 \"#{postgres_location}\""
 	`#{cmd}`
 
 	puts("Ziping up #{server_name} Mongo database")
-	cmd = "#{p7z} a #{snap_location_new}mongo_dump.7z -m0=lzma2 -mx0 #{mongo_location}"
+	cmd = "#{p7z} a #{snap_location_new}mongo_dump.7z -m0=bcj -m1=zstd -mx1 #{mongo_location}"
 	`#{cmd}`
 
 	puts("Ziping up #{server_name} Binarys")
-	cmd = "#{p7z} a #{snap_location_new}bindumps.7z -m0=lzma2 -mx0 #{bin_location}"
+	cmd = "#{p7z} a #{snap_location_new}bindumps.7z -m0=bcj -m1=zstd -mx1 #{bin_location}"
 	`#{cmd}`
 	
 	puts("Ziping up #{server_name} Configs")
-	cmd = "#{p7z} a #{snap_location_new}confdumps.7z -m0=lzma2 -mx0 #{conf_location}"
+	cmd = "#{p7z} a #{snap_location_new}confdumps.7z -m0=bcj -m1=zstd -mx1 #{conf_location}"
 	`#{cmd}`
 
 	cleaner.join
