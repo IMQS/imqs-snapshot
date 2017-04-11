@@ -1,11 +1,11 @@
 require 'fileutils'
-require '.\services.rb'
 
 POSTGRES_INSTALL_DIR = 'c:\Program Files\PostgreSQL\9.3'
 POSTGRES_BIN_DIR = POSTGRES_INSTALL_DIR + '\bin'
 POSTGRES_INITDB = POSTGRES_BIN_DIR + '\initdb'
 POSTGRES_PASSWORD_JSON_FILE = 'c:\imqsbin\conf\secrets.json'
-POSTGRES_DATA = 'c:\imqsvar\postgres'
+#POSTGRES_DATA = 'c:\imqsvar\postgres'
+POSTGRES_DATA = 'c:\\Program Files\\PostgreSQL\\9.3\\data'
 
 def build(args)
 	server_name = args[0]
@@ -63,7 +63,7 @@ def build(args)
 end
 
 def init_postgres()
-	stop_services_wait()
+	`ruby C:\imqsbin\installers\service_management.rb stop all`
 
 	puts('Wiping postgres database.')
 	if File.directory?(POSTGRES_DATA)
@@ -80,9 +80,9 @@ def init_postgres()
 	`\"#{POSTGRES_INITDB}\" --encoding=UTF8 --auth-host=md5 --username=postgres --pwfile=#{pwd_file} #{POSTGRES_DATA}`
 	File.delete(pwd_file)
 
-	`takeown /a /f #{POSTGRES_DATA.gsub('/', '\\')} /r`
+	`takeown /a /f \"#{POSTGRES_DATA.gsub('/', '\\')}\" /r`
 
-	start_service('Postgres')
+	`ruby C:\imqsbin\installers\service_management.rb start Postgres`
 
 	psql_stub = "\"#{POSTGRES_BIN_DIR}\\psql\" --host=localhost --username=postgres -c"
 	sql = "CREATE ROLE imqs SUPERUSER CREATEDB CREATEROLE REPLICATION LOGIN PASSWORD '#{pwd}'"
@@ -95,7 +95,7 @@ def init_postgres()
 		`ruby installers\\install.rb -prod`
 	end
 	puts('Done seting up new postgres database')
-	start_services_wait()
+	`ruby C:\imqsbin\installers\service_management.rb start all`
 end
 
 if __FILE__ == $0

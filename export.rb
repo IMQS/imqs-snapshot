@@ -1,5 +1,4 @@
 require 'fileutils'
-require '.\services.rb'
 
 def export(args)
 	p7z = 'c:\\imqsbin\\tools\\7z.exe'
@@ -70,7 +69,7 @@ def export(args)
 	conf_location += '\\*'
 
 	if __FILE__ == $0
-		stop_services_wait()
+		`ruby C:\imqsbin\installers\service_management.rb stop all`
 	end
 
 	puts("Ziping up #{server_name} Postgres database")
@@ -95,7 +94,7 @@ def export(args)
 	puts('Exported system to ' + snap_location)
 
 	if __FILE__ == $0
-		start_services_wait()
+		`ruby C:\imqsbin\installers\service_management.rb start all`
 	end
 end
 

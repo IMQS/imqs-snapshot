@@ -24,7 +24,7 @@ def import(args)
 	end
 
 	if __FILE__ == $0
-		stop_services_wait()
+		`ruby C:\imqsbin\installers\service_management.rb stop all`
 	end
 
 	if (File.directory?(postgres_location) && File.directory?(mongo_location) &&
@@ -90,7 +90,7 @@ def import(args)
 	end
 
 	if __FILE__ == $0
-		start_services_wait()
+		`ruby C:\imqsbin\installers\service_management.rb start all`
 	end
 end
 
